@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-LRM_FROM_TRANSLATIION_FOLDER_ID="placeholder"
+LRM_FROM_TRANSLATION_FOLDER_ID="placeholder"
 ARCHIVE_FOLDER_ID="placeholder"
 DOWNLOAD_DIR="placeholder"
 
@@ -20,15 +20,15 @@ validations() {
         die "Error. gdrive found but not executable"
     fi
 
-    if ! gdrive files list "'$LRM_FROM_TRANSLATIION_FOLDER_ID' in parents" > /dev/null ; then
-        die "Error. Could not access gdrive folder '$LRM_FROM_TRANSLATIION_FOLDER_ID'"
+    if ! gdrive files list "'$LRM_FROM_TRANSLATION_FOLDER_ID' in parents" > /dev/null ; then
+        die "Error. Could not access gdrive folder '$LRM_FROM_TRANSLATION_FOLDER_ID'"
     fi
 
     if ! gdrive files list "'$ARCHIVE_FOLDER_ID' in parents" > /dev/null ; then
         die "Error. Could not access gdrive folder '$ARCHIVE_FOLDER_ID'"
     fi
 
-    if [[ "$LRM_FROM_TRANSLATIION_FOLDER_ID" == "$ARCHIVE_FOLDER_ID" ]] ; then
+    if [[ "$LRM_FROM_TRANSLATION_FOLDER_ID" == "$ARCHIVE_FOLDER_ID" ]] ; then
        die "Error. LRM_FROM_TRANSLATIONS folder id must be different from the Archive folder id."
     fi
 
@@ -108,14 +108,14 @@ validations
 cd "$DOWNLOAD_DIR" || die "Error. Could not cd to $DOWNLOAD_DIR"
 
 warnings=()
-while has_folders "$LRM_FROM_TRANSLATIION_FOLDER_ID" ; do
+while has_folders "$LRM_FROM_TRANSLATION_FOLDER_ID" ; do
     while read -r foldername ; do
         if [[ -z "$foldername" ]] ; then
             continue
         fi
-        folderid="$(get_a_folder_id "$LRM_FROM_TRANSLATIION_FOLDER_ID" "$foldername")"
+        folderid="$(get_a_folder_id "$LRM_FROM_TRANSLATION_FOLDER_ID" "$foldername")"
         if [[ -z "$folderid" ]] ; then
-            die "Error. Could not get folder id for folder $foldername under $LRM_FROM_TRANSLATIION_FOLDER_ID ."
+            die "Error. Could not get folder id for folder $foldername under $LRM_FROM_TRANSLATION_FOLDER_ID ."
         fi
         if [[ -d "./$foldername" ]] ; then
             rm -r "./$foldername"
@@ -133,7 +133,7 @@ while has_folders "$LRM_FROM_TRANSLATIION_FOLDER_ID" ; do
         zip -FSr "$foldername.zip" "$foldername"
         rm -r "$foldername"
         gdrive files move "$folderid" "$ARCHIVE_FOLDER_ID" || die "Error. Failed to archive $folderid after download."
-    done <<< "$(get_some_folder_names "$LRM_FROM_TRANSLATIION_FOLDER_ID")"
+    done <<< "$(get_some_folder_names "$LRM_FROM_TRANSLATION_FOLDER_ID")"
 done
 
 for warning in "${warnings[@]}" ; do

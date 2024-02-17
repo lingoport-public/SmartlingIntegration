@@ -2,7 +2,6 @@
 
 
 LRM_TO_TRANSLATIION_FOLDER_ID="placeholder"
-ARCHIVE_FOLDER_ID="placeholder"
 UPLOAD_DIR="placeholder"
 
 die() {
@@ -24,10 +23,6 @@ validations() {
         die "Error. Could not access gdrive folder '$LRM_TO_TRANSLATIION_FOLDER_ID'"
     fi
 
-    if ! gdrive files list "'$ARCHIVE_FOLDER_ID' in parents" > /dev/null ; then
-        die "Error. Could not access gdrive folder '$ARCHIVE_FOLDER_ID'"
-    fi
-
     if ! [[ -d "$UPLOAD_DIR" ]] ; then
         die "Error. Upload directory $UPLOAD_DIR not found or not a directory"
     fi
@@ -40,9 +35,9 @@ clean_unzip() {
         if [[ -z "$existing_folder" ]] ; then
             continue
         fi
-        changed="$(stat -c '%z' "$target")"
+        changed="$(stat -c '%z' "$existing_folder")"
         mv "$existing_folder" "$existing_folder.bak.$changed"
-    done <<< "$(find . -maxdepth 1 -iname "$foldername" -type d)"
+    done <<< "$(find . -maxdepth 1 -iname "$foldername" -type d '!' -iname "*.bak.*")"
     unzip "$zipfile"
     if [[ -z "$(find . -maxdepth 1 -iname "$foldername" -type d)" ]] ; then
         die "Error. Folder $foldername not present after unzipping $zipfile at $(pwd)"

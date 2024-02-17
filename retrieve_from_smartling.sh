@@ -20,8 +20,8 @@ validations() {
         die "Error. gdrive found but not executable"
     fi
 
-    if ! gdrive files list "'$LRM_TO_TRANSLATIION_FOLDER_ID' in parents" > /dev/null ; then
-        die "Error. Could not access gdrive folder '$LRM_TO_TRANSLATIION_FOLDER_ID'"
+    if ! gdrive files list "'$LRM_FROM_TRANSLATIION_FOLDER_ID' in parents" > /dev/null ; then
+        die "Error. Could not access gdrive folder '$LRM_FROM_TRANSLATIION_FOLDER_ID'"
     fi
 
     if ! gdrive files list "'$ARCHIVE_FOLDER_ID' in parents" > /dev/null ; then
@@ -32,8 +32,8 @@ validations() {
        die "Error. LRM_FROM_TRANSLATIONS folder id must be different from the Archive folder id."
     fi
 
-    if ! [[ -d "$UPLOAD_DIR" ]] ; then
-        die "Error. Upload directory $UPLOAD_DIR not found or not a directory"
+    if ! [[ -d "$DOWNLOAD_DIR" ]] ; then
+        die "Error. Upload directory $DOWNLOAD_DIR not found or not a directory"
     fi
 }
 
@@ -75,7 +75,7 @@ get_a_folder_id() {
 is_valid() {
     foldername="$1"
     if [[ ! -d "$foldername" ]] ; then
-        return false
+        return 1
     fi
     # should have a single subfolder with all content
     # E.g.
@@ -126,7 +126,7 @@ while has_folders "$LRM_FROM_TRANSLATIION_FOLDER_ID" ; do
         fi
         if ! is_valid "$foldername" ; then
             warnings+=("WARN: Folder $foldername found but is invalid. Expecting another subdirectory that contains all files.")
-            archive "$foldername"
+            gdrive files move "$folderid" "$ARCHIVE_FOLDER_ID" || die "Error. Failed to archive $folderid after download."
             continue
         fi
         correct_format "$foldername"

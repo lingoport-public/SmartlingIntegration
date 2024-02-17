@@ -52,7 +52,7 @@ clean_unzip() {
 exists_in_gdrive_folder() {
     gdrive_folder="$1"
     name="$2"
-    results="$(gdrive files list --query "name = '$name' and '$gdrive_folder' in parents" | tail -n +2)"
+    results="$(gdrive files list --skip-header --query "name = '$name' and '$gdrive_folder' in parents")"
     if [[ -z "$results" ]] ; then
         return 1
     fi

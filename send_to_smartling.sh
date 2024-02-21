@@ -28,7 +28,7 @@ validations() {
         die "Error. Please define var SMARTLING_LOCAL_UPLOAD_DIR"
     fi
 
-    if ! gdrive files list "'$SMARTLING_GDRIVE_TO_TRANSLATION_FOLDER_ID' in parents" > /dev/null ; then
+    if ! gdrive files list --query "'$SMARTLING_GDRIVE_TO_TRANSLATION_FOLDER_ID' in parents" > /dev/null ; then
         die "Error. Could not access gdrive folder '$SMARTLING_GDRIVE_TO_TRANSLATION_FOLDER_ID'"
     fi
 

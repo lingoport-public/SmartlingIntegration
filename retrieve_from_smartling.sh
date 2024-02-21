@@ -1,9 +1,9 @@
 #!/bin/bash
 
 
-LRM_FROM_TRANSLATION_FOLDER_ID="placeholder"
-ARCHIVE_FOLDER_ID="placeholder"
-DOWNLOAD_DIR="placeholder"
+SMARTLING_GDRIVE_FROM_TRANSLATION_FOLDER_ID="placeholder"
+SMARTLING_GDRIVE_ARCHIVE_FOLDER_ID="placeholder"
+SMARTLING_LOCAL_DOWNLOAD_DIR="placeholder"
 
 die() {
     echo -e >&2 "$@"
@@ -20,20 +20,20 @@ validations() {
         die "Error. gdrive found but not executable"
     fi
 
-    if ! gdrive files list "'$LRM_FROM_TRANSLATION_FOLDER_ID' in parents" > /dev/null ; then
-        die "Error. Could not access gdrive folder '$LRM_FROM_TRANSLATION_FOLDER_ID'"
+    if ! gdrive files list "'$SMARTLING_GDRIVE_FROM_TRANSLATION_FOLDER_ID' in parents" > /dev/null ; then
+        die "Error. Could not access gdrive folder '$SMARTLING_GDRIVE_FROM_TRANSLATION_FOLDER_ID'"
     fi
 
-    if ! gdrive files list "'$ARCHIVE_FOLDER_ID' in parents" > /dev/null ; then
-        die "Error. Could not access gdrive folder '$ARCHIVE_FOLDER_ID'"
+    if ! gdrive files list "'$SMARTLING_GDRIVE_ARCHIVE_FOLDER_ID' in parents" > /dev/null ; then
+        die "Error. Could not access gdrive folder '$SMARTLING_GDRIVE_ARCHIVE_FOLDER_ID'"
     fi
 
-    if [[ "$LRM_FROM_TRANSLATION_FOLDER_ID" == "$ARCHIVE_FOLDER_ID" ]] ; then
+    if [[ "$SMARTLING_GDRIVE_FROM_TRANSLATION_FOLDER_ID" == "$SMARTLING_GDRIVE_ARCHIVE_FOLDER_ID" ]] ; then
        die "Error. LRM_FROM_TRANSLATIONS folder id must be different from the Archive folder id."
     fi
 
-    if ! [[ -d "$DOWNLOAD_DIR" ]] ; then
-        die "Error. Upload directory $DOWNLOAD_DIR not found or not a directory"
+    if ! [[ -d "$SMARTLING_LOCAL_DOWNLOAD_DIR" ]] ; then
+        die "Error. Upload directory $SMARTLING_LOCAL_DOWNLOAD_DIR not found or not a directory"
     fi
 }
 
@@ -105,17 +105,17 @@ correct_format() {
 (
 validations
 
-cd "$DOWNLOAD_DIR" || die "Error. Could not cd to $DOWNLOAD_DIR"
+cd "$SMARTLING_LOCAL_DOWNLOAD_DIR" || die "Error. Could not cd to $SMARTLING_LOCAL_DOWNLOAD_DIR"
 
 warnings=()
-while has_folders "$LRM_FROM_TRANSLATION_FOLDER_ID" ; do
+while has_folders "$SMARTLING_GDRIVE_FROM_TRANSLATION_FOLDER_ID" ; do
     while read -r foldername ; do
         if [[ -z "$foldername" ]] ; then
             continue
         fi
-        folderid="$(get_a_folder_id "$LRM_FROM_TRANSLATION_FOLDER_ID" "$foldername")"
+        folderid="$(get_a_folder_id "$SMARTLING_GDRIVE_FROM_TRANSLATION_FOLDER_ID" "$foldername")"
         if [[ -z "$folderid" ]] ; then
-            die "Error. Could not get folder id for folder $foldername under $LRM_FROM_TRANSLATION_FOLDER_ID ."
+            die "Error. Could not get folder id for folder $foldername under $SMARTLING_GDRIVE_FROM_TRANSLATION_FOLDER_ID ."
         fi
         if [[ -d "./$foldername" ]] ; then
             rm -r "./$foldername"
@@ -126,14 +126,14 @@ while has_folders "$LRM_FROM_TRANSLATION_FOLDER_ID" ; do
         fi
         if ! is_valid "$foldername" ; then
             warnings+=("WARN: Folder $foldername found but is invalid. Expecting another subdirectory that contains all files.")
-            gdrive files move "$folderid" "$ARCHIVE_FOLDER_ID" || die "Error. Failed to archive $folderid after download."
+            gdrive files move "$folderid" "$SMARTLING_GDRIVE_ARCHIVE_FOLDER_ID" || die "Error. Failed to archive $folderid after download."
             continue
         fi
         correct_format "$foldername"
         zip -FSr "$foldername.zip" "$foldername"
         rm -r "$foldername"
-        gdrive files move "$folderid" "$ARCHIVE_FOLDER_ID" || die "Error. Failed to archive $folderid after download."
-    done <<< "$(get_some_folder_names "$LRM_FROM_TRANSLATION_FOLDER_ID")"
+        gdrive files move "$folderid" "$SMARTLING_GDRIVE_ARCHIVE_FOLDER_ID" || die "Error. Failed to archive $folderid after download."
+    done <<< "$(get_some_folder_names "$SMARTLING_GDRIVE_FROM_TRANSLATION_FOLDER_ID")"
 done
 
 for warning in "${warnings[@]}" ; do

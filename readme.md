@@ -15,7 +15,7 @@ Please follow the instructions in depth and be sure you can manually run gdrive 
 
 ## Configuration
 
-Replace the placeholder values for `LRM_FROM_TRANSLATIION_FOLDER_ID`, `ARCHIVE_FOLDER_ID`, `DOWNLOAD_DIR`, `LRM_TO_TRANSLATIION_FOLDER_ID`, and `UPLOAD_DIR` in the scripts with actual Google Drive folder IDs and local directory paths.
+Replace the placeholder values for `SMARTLING_GDRIVE_FROM_TRANSLATION_FOLDER_ID`, `SMARTLING_GDRIVE_ARCHIVE_FOLDER_ID`, `SMARTLING_LOCAL_DOWNLOAD_DIR`, `SMARTLING_GDRIVE_TO_TRANSLATION_FOLDER_ID`, and `SMARTLING_LOCAL_UPLOAD_DIR` in the scripts with actual Google Drive folder IDs and local directory paths.
 
 To get a folder ID, browse to the folder in your browser and look at the url. It will be something like: 
 https://drive.google.com/drive/u/0/folders/1PC5NnN2YMkLzlQD-KmxDdjbgG4l4-3ZW

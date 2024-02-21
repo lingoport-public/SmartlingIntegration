@@ -1,8 +1,8 @@
 #!/bin/bash
 
 
-LRM_TO_TRANSLATION_FOLDER_ID="placeholder"
-UPLOAD_DIR="placeholder"
+SMARTLING_GDRIVE_TO_TRANSLATION_FOLDER_ID="placeholder"
+SMARTLING_LOCAL_UPLOAD_DIR="placeholder"
 
 die() {
     echo -e >&2 "$@"
@@ -19,12 +19,12 @@ validations() {
         die "Error. gdrive found but not executable"
     fi
 
-    if ! gdrive files list "'$LRM_TO_TRANSLATION_FOLDER_ID' in parents" > /dev/null ; then
-        die "Error. Could not access gdrive folder '$LRM_TO_TRANSLATION_FOLDER_ID'"
+    if ! gdrive files list "'$SMARTLING_GDRIVE_TO_TRANSLATION_FOLDER_ID' in parents" > /dev/null ; then
+        die "Error. Could not access gdrive folder '$SMARTLING_GDRIVE_TO_TRANSLATION_FOLDER_ID'"
     fi
 
-    if ! [[ -d "$UPLOAD_DIR" ]] ; then
-        die "Error. Upload directory $UPLOAD_DIR not found or not a directory"
+    if ! [[ -d "$SMARTLING_LOCAL_UPLOAD_DIR" ]] ; then
+        die "Error. Upload directory $SMARTLING_LOCAL_UPLOAD_DIR not found or not a directory"
     fi
 }
 
@@ -57,16 +57,16 @@ exists_in_gdrive_folder() {
 (
 validations
 
-cd "$UPLOAD_DIR" || die "Error. Could not cd to $UPLOAD_DIR"
+cd "$SMARTLING_LOCAL_UPLOAD_DIR" || die "Error. Could not cd to $SMARTLING_LOCAL_UPLOAD_DIR"
 
 while read -r zipfile ; do
     zipdir="${zipfile%.zip}"
     clean_unzip "$zipfile"
-    if exists_in_gdrive_folder "$LRM_TO_TRANSLATION_FOLDER_ID" "${zipdir}" ; then
+    if exists_in_gdrive_folder "$SMARTLING_GDRIVE_TO_TRANSLATION_FOLDER_ID" "${zipdir}" ; then
         echo "NOTE: ${zipdir} already present in gdrive. Not uploading."
     else
-        gdrive files upload --recursive --parent "$LRM_TO_TRANSLATION_FOLDER_ID" "$zipdir" || die "Error. Error occurred while uploading $zipdir to $LRM_TO_TRANSLATION_FOLDER_ID"
-        if exists_in_gdrive_folder "$LRM_TO_TRANSLATION_FOLDER_ID" "${zipdir}" ; then
+        gdrive files upload --recursive --parent "$SMARTLING_GDRIVE_TO_TRANSLATION_FOLDER_ID" "$zipdir" || die "Error. Error occurred while uploading $zipdir to $SMARTLING_GDRIVE_TO_TRANSLATION_FOLDER_ID"
+        if exists_in_gdrive_folder "$SMARTLING_GDRIVE_TO_TRANSLATION_FOLDER_ID" "${zipdir}" ; then
             rm -r "$zipdir"
             rm "$zipfile"
         fi

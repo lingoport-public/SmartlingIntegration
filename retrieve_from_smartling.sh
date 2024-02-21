@@ -1,9 +1,9 @@
 #!/bin/bash
 
-
-SMARTLING_GDRIVE_FROM_TRANSLATION_FOLDER_ID="placeholder"
-SMARTLING_GDRIVE_ARCHIVE_FOLDER_ID="placeholder"
-SMARTLING_LOCAL_DOWNLOAD_DIR="placeholder"
+# Input Vars
+# SMARTLING_GDRIVE_FROM_TRANSLATION_FOLDER_ID
+# SMARTLING_GDRIVE_ARCHIVE_FOLDER_ID
+# SMARTLING_LOCAL_DOWNLOAD_DIR
 
 die() {
     echo -e >&2 "$@"
@@ -18,6 +18,22 @@ validations() {
 
     if [[ ! -x "$path_to_gdrive" ]] ; then
         die "Error. gdrive found but not executable"
+    fi
+
+    if [[ -z "$SMARTLING_GDRIVE_FROM_TRANSLATION_FOLDER_ID" ]] ; then
+        die "Error. Please define var SMARTLING_GDRIVE_FROM_TRANSLATION_FOLDER_ID"
+    fi
+
+    if [[ -z "$SMARTLING_GDRIVE_FROM_TRANSLATION_FOLDER_ID" ]] ; then
+        die "Error. Please define var SMARTLING_GDRIVE_FROM_TRANSLATION_FOLDER_ID"
+    fi
+
+    if [[ -z "$SMARTLING_GDRIVE_ARCHIVE_FOLDER_ID" ]] ; then
+        die "Error. Please define var SMARTLING_GDRIVE_ARCHIVE_FOLDER_ID"
+    fi
+
+    if [[ -z "$SMARTLING_LOCAL_DOWNLOAD_DIR" ]] ; then
+        die "Error. Please define var SMARTLING_LOCAL_DOWNLOAD_DIR"
     fi
 
     if ! gdrive files list "'$SMARTLING_GDRIVE_FROM_TRANSLATION_FOLDER_ID' in parents" > /dev/null ; then

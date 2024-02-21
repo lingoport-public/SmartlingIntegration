@@ -1,8 +1,9 @@
 #!/bin/bash
 
 
-SMARTLING_GDRIVE_TO_TRANSLATION_FOLDER_ID="placeholder"
-SMARTLING_LOCAL_UPLOAD_DIR="placeholder"
+# Input Vars
+# SMARTLING_GDRIVE_TO_TRANSLATION_FOLDER_ID
+# SMARTLING_LOCAL_UPLOAD_DIR
 
 die() {
     echo -e >&2 "$@"
@@ -17,6 +18,14 @@ validations() {
 
     if [[ ! -x "$path_to_gdrive" ]] ; then
         die "Error. gdrive found but not executable"
+    fi
+
+    if [[ -z "$SMARTLING_GDRIVE_TO_TRANSLATION_FOLDER_ID" ]] ; then
+        die "Error. Please define var SMARTLING_GDRIVE_TO_TRANSLATION_FOLDER_ID"
+    fi
+
+    if [[ -z "$SMARTLING_LOCAL_UPLOAD_DIR" ]] ; then
+        die "Error. Please define var SMARTLING_LOCAL_UPLOAD_DIR"
     fi
 
     if ! gdrive files list "'$SMARTLING_GDRIVE_TO_TRANSLATION_FOLDER_ID' in parents" > /dev/null ; then

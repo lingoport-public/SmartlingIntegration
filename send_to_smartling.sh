@@ -46,9 +46,9 @@ clean_unzip() {
         fi
         changed="$(stat -c '%z' "$existing_folder")"
         mv "$existing_folder" "$existing_folder.bak.$changed"
-    done <<< "$(find . -maxdepth 1 -iname "$foldername" -type d '!' -iname "*.bak.*")"
+    done <<< "$(find . -maxdepth 1 -ipath "$foldername" -type d '!' -ipath "*.bak.*")"
     unzip "$zipfile"
-    if [[ -z "$(find . -maxdepth 1 -iname "$foldername" -type d)" ]] ; then
+    if [[ -z "$(find . -maxdepth 1 -ipath "$foldername" -type d)" ]] ; then
         die "Error. Folder $foldername not present after unzipping $zipfile at $(pwd)"
     fi
 }
@@ -63,12 +63,14 @@ exists_in_gdrive_folder() {
     return 0
 }
 
+main() {
 (
 validations
 
 cd "$SMARTLING_LOCAL_UPLOAD_DIR" || die "Error. Could not cd to $SMARTLING_LOCAL_UPLOAD_DIR"
 
 while read -r zipfile ; do
+    zipfile="$(basename "$zipfile")"
     zipdir="${zipfile%.zip}"
     clean_unzip "$zipfile"
     if exists_in_gdrive_folder "$SMARTLING_GDRIVE_TO_TRANSLATION_FOLDER_ID" "${zipdir}" ; then
@@ -82,3 +84,9 @@ while read -r zipfile ; do
     fi
 done <<< "$(find . -maxdepth 1 -name "*.zip")"
 )
+
+}
+
+if [[ -z "$TEST" ]] ; then
+    main
+fi

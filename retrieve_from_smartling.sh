@@ -53,16 +53,6 @@ validations() {
     fi
 }
 
-exists_in_gdrive_folder() {
-    gdrive_folder="$1"
-    name="$2"
-    results="$(gdrive files list --full-name --skip-header --query "name = '$name' and '$gdrive_folder' in parents")"
-    if [[ -z "$results" ]] ; then
-        return 1
-    fi
-    return 0
-}
-
 has_folders() {
     gdrive_folder="$1"
     results="$(gdrive files list --full-name --skip-header --query "mimeType = 'application/vnd.google-apps.folder' and '$gdrive_folder' in parents")"
@@ -118,6 +108,7 @@ correct_format() {
     rm -r "$subfolder"
 }
 
+main() {
 (
 validations
 
@@ -156,3 +147,8 @@ for warning in "${warnings[@]}" ; do
     echo -e >&2 "$warning"
 done
 )
+}
+
+if [[ -z "$TEST" ]] ; then
+    main
+fi

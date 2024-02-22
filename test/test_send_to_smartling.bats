@@ -46,6 +46,29 @@ teardown() {
   [ -d "./valid_zip" ] # Assuming the content is extracted to a folder named test
 }
 
+@test "Test clean_unzip with existing folder" {
+  cp ./test/fixtures/valid_zip.zip ./test/tmp/
+  mkdir ./test/tmp/valid_zip
+  cd ./test/tmp/
+  run clean_unzip "./valid_zip.zip"
+  [ "$status" -eq 0 ]
+  backup_dir_exists="$(find . -ipath "*.bak.*" | wc -l)"
+  find .
+  [ "$backup_dir_exists" -eq 1 ]
+}
+
+@test "Test clean_unzip with existing folder twice" {
+  cp ./test/fixtures/valid_zip.zip ./test/tmp/
+  mkdir ./test/tmp/valid_zip
+  cd ./test/tmp/
+  run clean_unzip "./valid_zip.zip"
+  run clean_unzip "./valid_zip.zip"
+  [ "$status" -eq 0 ]
+  backup_dir_exists="$(find . -ipath "*.bak.*" | wc -l)"
+  find .
+  [ "$backup_dir_exists" -eq 3 ]
+}
+
 @test "Test clean_unzip with non-existent zip file" {
   run clean_unzip "non_existent.zip"
   [ "$status" -eq 1 ]

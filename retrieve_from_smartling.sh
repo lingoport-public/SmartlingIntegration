@@ -132,16 +132,32 @@ while has_folders "$SMARTLING_GDRIVE_FROM_TRANSLATION_FOLDER_ID" ; do
             die "Error. Failed while attempted to download folder $folderid. Folder not present after download attempt."
         fi
         if ! is_valid "$foldername" ; then
-            warnings+=("WARN: Folder $foldername found but is invalid. Expecting another subdirectory that contains all files.")
             gdrive files move "$folderid" "$SMARTLING_GDRIVE_ARCHIVE_FOLDER_ID" || die "Error. Failed to archive $folderid after download."
-            continue
+            die "WARN: Folder $foldername found but is invalid. Expecting another subdirectory that contains all files."
         fi
-        correct_format "$foldername"
-        zip -FSr "$foldername.zip" "$foldername"
-        rm -r "$foldername"
         gdrive files move "$folderid" "$SMARTLING_GDRIVE_ARCHIVE_FOLDER_ID" || die "Error. Failed to archive $folderid after download."
     done <<< "$(get_some_folder_names "$SMARTLING_GDRIVE_FROM_TRANSLATION_FOLDER_ID")"
 done
+
+# Smartling leaves each file in its own folder after translation
+# so multiple folders in gdrive like
+# from_tranlation/MyGroup.MyProject.My_Locale
+# from_tranlation/MyGroup.MyProject.My_Locale
+# from_tranlation/MyGroup.MyProject.My_Locale
+# with content like:
+# my-locale/filea.properties
+# my-locale/fileb.properties
+# my-locale/filec.properties
+while read -r folder ; do
+    foldername="$(basename "$folder")"
+    if ! is_valid "$foldername" ; then
+        warnings+=("WARN: Folder $foldername found but is invalid. Expecting another subdirectory that contains all files.")
+        continue
+    fi
+    correct_format "$foldername"
+    zip -FSr "$foldername.zip" "$foldername"
+    rm -r "$foldername"
+done <<< "$(find . -maxdepth 1 -type d)"
 
 for warning in "${warnings[@]}" ; do
     echo -e >&2 "$warning"

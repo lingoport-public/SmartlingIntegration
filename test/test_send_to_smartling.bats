@@ -41,7 +41,7 @@ teardown() {
 @test "Test clean_unzip with valid zip file" {
   cp ./test/fixtures/valid_zip.zip ./test/tmp/
   cd ./test/tmp/
-  run clean_unzip "./valid_zip.zip"
+  run clean_unzip "valid_zip.zip"
   [ "$status" -eq 0 ]
   [ -d "./valid_zip" ] # Assuming the content is extracted to a folder named test
 }
@@ -50,7 +50,7 @@ teardown() {
   cp ./test/fixtures/valid_zip.zip ./test/tmp/
   mkdir ./test/tmp/valid_zip
   cd ./test/tmp/
-  run clean_unzip "./valid_zip.zip"
+  run clean_unzip "valid_zip.zip"
   [ "$status" -eq 0 ]
   backup_dir_exists="$(find . -ipath "*.bak.*" | wc -l)"
   find .
@@ -61,8 +61,8 @@ teardown() {
   cp ./test/fixtures/valid_zip.zip ./test/tmp/
   mkdir ./test/tmp/valid_zip
   cd ./test/tmp/
-  run clean_unzip "./valid_zip.zip"
-  run clean_unzip "./valid_zip.zip"
+  run clean_unzip "valid_zip.zip"
+  run clean_unzip "valid_zip.zip"
   [ "$status" -eq 0 ]
   backup_dir_exists="$(find . -ipath "*.bak.*" | wc -l)"
   find .

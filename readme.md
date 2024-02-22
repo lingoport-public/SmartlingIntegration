@@ -52,3 +52,11 @@ This script downloads files from a specified Google Drive folder, validates the 
 
 Both scripts include error handling to ensure smooth execution. They will terminate with an error message if certain critical steps fail.
 
+
+# TESTING
+
+Using bats: https://github.com/bats-core/bats-core
+
+Libraries added as git submodules to this repo, checkout all submodules before running tests
+
+test helper is: ./test.sh

@@ -124,9 +124,6 @@ while has_folders "$SMARTLING_GDRIVE_FROM_TRANSLATION_FOLDER_ID" ; do
         if [[ -z "$folderid" ]] ; then
             die "Error. Could not get folder id for folder $foldername under $SMARTLING_GDRIVE_FROM_TRANSLATION_FOLDER_ID ."
         fi
-        if [[ -d "./$foldername" ]] ; then
-            rm -r "./$foldername"
-        fi
         gdrive files download --overwrite  --recursive "$folderid" || die "Error. Failed while attempted to download folder $folderid."
         if [[ ! -d "$foldername" ]] ; then
             die "Error. Failed while attempted to download folder $folderid. Folder not present after download attempt."

@@ -148,7 +148,7 @@ while read -r folder ; do
         continue
     fi
     correct_format "$foldername"
-    zip -FSr "$foldername.zip" "$foldername"
+    zip -r "$foldername.zip" "$foldername"
     rm -r "$foldername"
 done <<< "$(find . -mindepth 1 -maxdepth 1 -type d)"
 

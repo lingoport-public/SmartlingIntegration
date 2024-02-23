@@ -114,6 +114,11 @@ validations
 
 cd "$SMARTLING_LOCAL_DOWNLOAD_DIR" || die "Error. Could not cd to $SMARTLING_LOCAL_DOWNLOAD_DIR"
 
+# Smartling leaves each file in its own folder after translation
+# so multiple folders in gdrive like
+# from_tranlation/MyGroup.MyProject.My_Locale (id: abcxyz) (content: my-locale/filea.properties)
+# from_tranlation/MyGroup.MyProject.My_Locale (id: cdelse) (content: my-locale/fileb.properties)
+# from_tranlation/MyGroup.MyProject.My_Locale (id: defbcg) (condent: my-locale/filec.properties)
 warnings=()
 while has_folders "$SMARTLING_GDRIVE_FROM_TRANSLATION_FOLDER_ID" ; do
     while read -r foldername ; do
@@ -130,21 +135,12 @@ while has_folders "$SMARTLING_GDRIVE_FROM_TRANSLATION_FOLDER_ID" ; do
         fi
         if ! is_valid "$foldername" ; then
             gdrive files move "$folderid" "$SMARTLING_GDRIVE_ARCHIVE_FOLDER_ID" || die "Error. Failed to archive $folderid after download."
-            die "WARN: Folder $foldername found but is invalid. Expecting another subdirectory that contains all files."
+            die "Error: Folder $foldername found but is invalid. Expecting another subdirectory that contains all files."
         fi
         gdrive files move "$folderid" "$SMARTLING_GDRIVE_ARCHIVE_FOLDER_ID" || die "Error. Failed to archive $folderid after download."
     done <<< "$(get_some_folder_names "$SMARTLING_GDRIVE_FROM_TRANSLATION_FOLDER_ID")"
 done
 
-# Smartling leaves each file in its own folder after translation
-# so multiple folders in gdrive like
-# from_tranlation/MyGroup.MyProject.My_Locale
-# from_tranlation/MyGroup.MyProject.My_Locale
-# from_tranlation/MyGroup.MyProject.My_Locale
-# with content like:
-# my-locale/filea.properties
-# my-locale/fileb.properties
-# my-locale/filec.properties
 while read -r folder ; do
     foldername="$(basename "$folder")"
     if ! is_valid "$foldername" ; then
@@ -154,7 +150,7 @@ while read -r folder ; do
     correct_format "$foldername"
     zip -FSr "$foldername.zip" "$foldername"
     rm -r "$foldername"
-done <<< "$(find . -maxdepth 1 -type d)"
+done <<< "$(find . -mindepth 1 -maxdepth 1 -type d)"
 
 for warning in "${warnings[@]}" ; do
     echo -e >&2 "$warning"

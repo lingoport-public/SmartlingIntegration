@@ -5,6 +5,8 @@
 # SMARTLING_GDRIVE_ARCHIVE_FOLDER_ID
 # SMARTLING_LOCAL_DOWNLOAD_DIR
 
+set +x # Overwrite jenkins default
+
 die() {
     echo -e >&2 "$@"
     exit 1
